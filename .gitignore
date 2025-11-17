@@ -1,0 +1,28 @@
+# Gradle y Compilación
+.gradle/
+/build/
+**/build/
+.kotlin/
+
+# IDE - Android Studio / IntelliJ
+.idea/
+*.iml
+*.iws
+*.ipr
+/local.properties
+/captures
+.externalNativeBuild/
+.cxx/
+
+# Archivos de Sistema
+.DS_Store
+Thumbs.db
+
+# Seguridad y Firmas
+*.jks
+*.keystore
+google-services.json
+
+# Logs y Temporales
+*.log
+*.hprof
