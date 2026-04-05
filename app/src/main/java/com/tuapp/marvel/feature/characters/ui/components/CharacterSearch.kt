@@ -1,4 +1,4 @@
-package com.tuapp.marvel.feature.characters.ui.characterList.components
+package com.tuapp.marvel.feature.characters.ui.components
 
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -22,7 +22,7 @@ fun CharacterSearch(
     query: String,
     onQueryChange: (query: String) -> Unit,
     onSearch: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier.Companion
 ) {
     OutlinedTextField(
         value = query,
@@ -40,7 +40,7 @@ fun CharacterSearch(
             }
         },
         keyboardOptions = KeyboardOptions(
-            imeAction = ImeAction.Search
+            imeAction = ImeAction.Companion.Search
         ),
         keyboardActions = KeyboardActions(
             onSearch = { onSearch() }

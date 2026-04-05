@@ -1,10 +1,10 @@
-package com.tuapp.marvel.feature.characters.ui.characterList
+package com.tuapp.marvel.feature.characters.ui.favorites
 
 import androidx.lifecycle.viewModelScope
 import com.tuapp.marvel.core.extensions.asUiResult
 import com.tuapp.marvel.core.ui.base.BaseViewModel
 import com.tuapp.marvel.feature.characters.domain.model.Character
-import com.tuapp.marvel.feature.characters.domain.usecase.GetCharactersUseCase
+import com.tuapp.marvel.feature.characters.domain.usecase.GetFavoritesUseCase
 import com.tuapp.marvel.feature.characters.domain.usecase.ToggleFavoriteUseCase
 import com.tuapp.marvel.feature.characters.ui.common.CharacterListContract.CharacterListState
 import com.tuapp.marvel.feature.characters.ui.common.CharacterListContract.CharacterListEffect
@@ -20,29 +20,28 @@ import javax.inject.Inject
 
 @OptIn(ExperimentalCoroutinesApi::class)
 @HiltViewModel
-class CharacterListViewModel @Inject constructor(
-    private val getCharactersUseCase: GetCharactersUseCase,
+class FavoriteViewModel @Inject constructor(
+    private val getFavoritesUseCase: GetFavoritesUseCase,
     private val toggleFavoriteUseCase: ToggleFavoriteUseCase
-): BaseViewModel<CharacterListState, CharacterListEffect, CharacterListIntent> (CharacterListState()) {
-
+): BaseViewModel<CharacterListState, CharacterListEffect, CharacterListIntent>(CharacterListState()) {
     private val queryFlow = MutableStateFlow("")
 
     init {
-        observeCharacters()
+        observeFavorites()
     }
 
     override fun onIntent(intent: CharacterListIntent) {
         when (intent) {
+            is CharacterListIntent.UpdateSearchQuery -> { updateState { copy(query = intent.query) } }
             is CharacterListIntent.SearchCharacters -> { queryFlow.value = uiState.value.query }
-            is CharacterListIntent.UpdateSearchQuery -> { updateState { copy(query = intent.query) }}
-            is CharacterListIntent.ToggleFavorites -> onToggleFavorite(intent.character)
+            is CharacterListIntent.ToggleFavorites -> { onToggleFavorite(intent.character)}
         }
     }
 
-    private fun observeCharacters() {
+    private fun observeFavorites() {
         queryFlow
             .flatMapLatest { query ->
-                getCharactersUseCase(query)
+                getFavoritesUseCase(query)
                     .asUiResult()
             }
             .onEach { updateState { copy(characterResult = it) } }

@@ -4,23 +4,24 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.tuapp.marvel.core.ui.components.CharacterListContent
+import com.tuapp.marvel.feature.characters.ui.components.CharacterListContent
+import com.tuapp.marvel.feature.characters.ui.common.CharacterListContract.CharacterListIntent
 
 @Composable
 fun FavoritesScreen(
     onComicClick: (Int) -> Unit,
-    viewModel: FavoritesViewModel = hiltViewModel()
+    viewModel: FavoriteViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     CharacterListContent(
-        searchQuery = uiState.searchQuery,
-        onSearch = { viewModel.onIntent(FavoriteUiIntent.SearchFavorites)},
-        onQueryChange = { viewModel.onIntent(FavoriteUiIntent.UpdateSearchQuery(it)) },
-        onToggleFavorite = { viewModel.onIntent(FavoriteUiIntent.ToggleFavorite(it)) },
+        searchQuery = uiState.query,
+        onSearch = { viewModel.onIntent(CharacterListIntent.SearchCharacters)},
+        onQueryChange = { viewModel.onIntent(CharacterListIntent.UpdateSearchQuery(it)) },
+        onToggleFavorite = { viewModel.onIntent(CharacterListIntent.ToggleFavorites(it)) },
         onCharacterClick = onComicClick,
-        isLoading = uiState.isLoading,
-        error = uiState.error,
-        characters = uiState.favorites
+        isLoading = uiState.characterResult.isLoading,
+        error = uiState.characterResult.errorOrNull(),
+        characters = uiState.characters
     )
 }

@@ -1,4 +1,4 @@
-package com.tuapp.marvel.core.ui.components
+package com.tuapp.marvel.feature.characters.ui.components
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.material3.CircularProgressIndicator
@@ -6,7 +6,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.tuapp.marvel.feature.characters.domain.model.Character
-import com.tuapp.marvel.feature.characters.ui.characterList.components.CharacterSearch
 
 @Composable
 fun CharacterListContent(

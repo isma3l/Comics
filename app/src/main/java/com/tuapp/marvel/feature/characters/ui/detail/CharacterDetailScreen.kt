@@ -16,38 +16,53 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
+import com.tuapp.marvel.core.ui.base.UiResult
+import com.tuapp.marvel.core.ui.components.ErrorMessage
 import com.tuapp.marvel.core.ui.components.FavoriteIcon
+import com.tuapp.marvel.feature.characters.domain.model.CharacterDetail
+import com.tuapp.marvel.feature.characters.ui.detail.CharacterDetailContract.CharacterDetailUiIntent
 
 @Composable
 fun CharacterDetailScreen(
     viewModel: CharacterDetailViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-    val detail = uiState.characterDetail
 
-    when {
-        uiState.isLoading -> CircularProgressIndicator()
-        uiState.error != null -> Text(text = uiState.error!!)
-        detail != null -> Column {
-            Box {
-                AsyncImage(
-                    model = detail.imageUrl,
-                    contentDescription = detail.name,
-                    contentScale = ContentScale.Crop,
-                    alignment = Alignment.TopCenter,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(250.dp)
-                )
-                FavoriteIcon(
-                    modifier = Modifier.align(Alignment.TopEnd),
-                    onToggleFavorite = { viewModel.onIntent(CharacterDetailUiIntent.ToggleFavorite) },
-                    isFavorite = detail.isFavorite,
-                    size = 36.dp
-                )
-            }
-            Text(text = detail.description ?: "", Modifier.padding(16.dp))
-        }
+    when (val detail = uiState.detailResult) {
+        is UiResult.Idle -> Unit
+        is UiResult.Loading -> CircularProgressIndicator()
+        is UiResult.Error -> ErrorMessage(detail.message)
+        is UiResult.Success -> CharacterDetailContent(
+            details = detail.data,
+            onToggleFavorite = { viewModel.onIntent(CharacterDetailUiIntent.ToggleFavorite) }
+        )
     }
+}
 
+
+@Composable
+private fun CharacterDetailContent(
+    details: CharacterDetail,
+    onToggleFavorite: () -> Unit
+) {
+    Column {
+        Box {
+            AsyncImage(
+                model = details.imageUrl,
+                contentDescription = details.name,
+                contentScale = ContentScale.Crop,
+                alignment = Alignment.TopCenter,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(250.dp)
+            )
+            FavoriteIcon(
+                modifier = Modifier.align(Alignment.TopEnd),
+                onToggleFavorite = onToggleFavorite,
+                isFavorite = details.isFavorite,
+                size = 36.dp
+            )
+        }
+        Text(text = details.description ?: "", Modifier.padding(16.dp))
+    }
 }
